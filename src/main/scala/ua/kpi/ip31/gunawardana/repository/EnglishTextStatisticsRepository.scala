@@ -1,32 +1,37 @@
 package ua.kpi.ip31.gunawardana.repository
 
 /**
+  * Grants access to English statistics.
+  *
   * @author Ruslan Gunawardana
   */
 class EnglishTextStatisticsRepository extends TextStatisticsRepository {
 
   import EnglishTextStatisticsRepository._
 
-  override def thirdOrderStatistics: Map[String, Double] = {
-    val fileSource = io.Source.fromInputStream(getClass.getResourceAsStream("/third-order-statistics.csv"))
-    val rows = (fileSource.getLines map parseCsvLine).toIterable
+  override def firstOrderStatistics: Map[String, Double] = loadStatisticsFrom("/first-order-statistics.csv")
+
+  override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom("/second-order-statistics.csv")
+
+  override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom("/third-order-statistics.csv")
+
+  private def loadStatisticsFrom(path: String): Map[String, Double] = {
+    val source = io.Source.fromInputStream(getClass getResourceAsStream path)
+    val rows = (source.getLines map parseCsvLine).toIterable
     val columnTitles = rows.head.tail map (_ charAt 0)
     val statistics = rows
       .tail
       .flatMap { row =>
         val rowElements = row.tail map (_.toDouble)
-        val tuples: Array[(Double, Char)] = rowElements zip columnTitles
-        (rowElements, columnTitles).zipped map { (e, columnTitle) => row.head + columnTitle -> e }
+        rowElements zip columnTitles map { case (e, columnTitle) => row.head + columnTitle -> e }
       }
-      .filter { e => e._2 > 0 }
+      .filter { case (k, v) => (k forall (alphabet contains _)) && v > 0 }
       .toMap
-    fileSource.close
+    source.close()
     statistics
   }
 
-  override def alphabet: String = {
-    "abcdefghijklmnopqrstuvwxyz"
-  }
+  override def alphabet = "abcdefghijklmnopqrstuvwxyz"
 }
 
 object EnglishTextStatisticsRepository {

@@ -6,7 +6,7 @@
 .history
 .lib/
 dist/*
-target/
+/target/
 lib_managed/
 src_managed/
 project/boot/
@@ -18,7 +18,6 @@ project/plugins/project/
 /project/*-shim.sbt
 /project/project/
 /project/target/
-/target/
 
 # Scala-IDE specific
 .scala_dependencies
@@ -68,3 +67,7 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# Custom user path files
+/.idea/sbt.xml
+/.idea/misc.xml

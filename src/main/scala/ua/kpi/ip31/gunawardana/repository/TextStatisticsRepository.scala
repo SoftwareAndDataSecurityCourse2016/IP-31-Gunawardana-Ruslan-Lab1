@@ -1,12 +1,17 @@
 package ua.kpi.ip31.gunawardana.repository
 
 /**
-  * Thread-safety not verified.
-  * Immutability not verified.
+  * Grants access to some language statistics.
+  * Each language should supply it's own statistics.
   *
   * @author Ruslan Gunawardana
   */
 trait TextStatisticsRepository {
+  def firstOrderStatistics: Map[String, Double]
+
+  def secondOrderStatistics: Map[String, Double]
+
   def thirdOrderStatistics: Map[String, Double]
+
   def alphabet: String
 }
