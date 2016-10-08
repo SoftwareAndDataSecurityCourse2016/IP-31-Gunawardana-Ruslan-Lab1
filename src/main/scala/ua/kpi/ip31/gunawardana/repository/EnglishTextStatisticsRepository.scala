@@ -32,6 +32,13 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
   }
 
   override def alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+  override def alphabetSortedByStats(stats: Map[String, Double]): String = {
+    (alphabet
+      map { c => c -> stats.getOrElse(c.toString, 0.0) }
+      sortBy (_._2)
+      map (_._1)).mkString
+  }
 }
 
 object EnglishTextStatisticsRepository {

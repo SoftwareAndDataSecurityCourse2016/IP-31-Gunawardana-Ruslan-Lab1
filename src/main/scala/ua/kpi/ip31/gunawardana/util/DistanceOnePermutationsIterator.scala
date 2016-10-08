@@ -5,7 +5,7 @@ import scala.collection.{AbstractIterator, Iterator}
 /**
   * Performs only neighbour elements permutations.
   */
-class StringPermutationsIterator(original: String) extends AbstractIterator[String] {
+class DistanceOnePermutationsIterator(original: String) extends AbstractIterator[String] {
   private[this] var elms = original.toArray
   private[this] var iterationNum = 1
   private[this] var hasEvenPairsToSwap = true
