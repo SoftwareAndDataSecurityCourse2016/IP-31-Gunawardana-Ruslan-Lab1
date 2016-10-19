@@ -1,9 +1,6 @@
 package ua.kpi.ip31.gunawardana
 
 import ua.kpi.ip31.gunawardana.repository.TextStatisticsRepository
-import ua.kpi.ip31.gunawardana.util.DistanceOnePermutationsIterator
-
-import scala.collection.{Iterator}
 
 /**
   * Thread-safe. Immutable.
@@ -22,21 +19,21 @@ class FrequencyDecoder(statsRepo: TextStatisticsRepository, statsCalculator: Sta
   }
 
   private def findCipherKeyFor(ciphertext: String): Seq[(Char, Char)] = {
-    val expectedFrequencyMap = statsRepo.thirdOrderStatistics
-    val ciphertextFrequencyMap = statsCalculator(ciphertext, 3)
-    val alphabetSortedByExpectedStats = statsRepo.alphabetSortedByStats(statsRepo.firstOrderStatistics)
-    val alphabetSortedByCiphertextStats = statsRepo.alphabetSortedByStats(statsCalculator(ciphertext, 1))
+    val expectedStats = statsRepo.secondOrderStatistics
+    val ciphertextStats = statsCalculator(ciphertext, 2)
+    val alphabetSortedByExpectedStats = statsRepo alphabetSortedByStats statsRepo.firstOrderStatistics
+    val alphabetSortedByCiphertextStats = statsRepo alphabetSortedByStats statsCalculator(ciphertext, 1)
 
-    val alphabetChiSquares = alphabetSortedByCiphertextStats.distanceOnePermutations map { substitutionAlphabet =>
+    val permutations = alphabetSortedByCiphertextStats.distanceOnePermutations //randomPermutations 1024
+    val alphabetChiSquares = permutations map { substitutionAlphabet =>
       val decipheringKey = (substitutionAlphabet zip alphabetSortedByExpectedStats).toMap
-      val actualFrequencyMap = ciphertextFrequencyMap map { case (k, v) =>
+      val actualFrequencyMap = ciphertextStats map { case (k, v) =>
         (k map decipheringKey) -> v
       }
-      val chiSquare = statsCalculator.chiSquareTest(expectedFrequencyMap, actualFrequencyMap)
+      val chiSquare = statsCalculator.chiSquareTest(expectedStats, actualFrequencyMap)
       substitutionAlphabet -> chiSquare
     }
     val sortedSubstitutionAlphabet = (alphabetChiSquares minBy (_._2))._1
     sortedSubstitutionAlphabet zip alphabetSortedByExpectedStats
   }
-
 }

@@ -12,11 +12,11 @@ object Main {
   val ciphertextRepository = new CiphertextRepository
 
   def main(args: Array[String]): Unit = {
-    val text1 = ciphertextRepository.ciphertexts.head
-    val decoded = decoder.decode(text1)
-    println("Text:")
-    println(text1)
-    println("Decoded:")
-    println(decoded)
+    val ciphertext = ciphertextRepository.ciphertexts.head
+    val plaintext = decoder.decode(ciphertext)
+    println("Encoded ciphertext:")
+    println(ciphertext)
+    println("Decoded plaintext:")
+    println(plaintext)
   }
 }

@@ -18,26 +18,29 @@ class DistanceOnePermutationsIterator(original: String) extends AbstractIterator
       Iterator.empty.next()
 
     val result = elms.mkString
-    if (hasEvenPairsToSwap && !prepareNext()) {
-      hasEvenPairsToSwap = false
-      iterationNum = 1
-    } else {
-      _hasNext = prepareNext()
+    if (!prepareNext()) {
+      if (hasEvenPairsToSwap) {
+        hasEvenPairsToSwap = false
+        iterationNum = 1
+        prepareNext()
+      } else {
+        _hasNext = false
+      }
     }
     iterationNum += 1
     result
   }
 
-  private def prepareNext() = {
+  private def prepareNext(): Boolean = {
     elms = original.toArray
-    var swapped = false
     var i = iterationNum
     var j = if (hasEvenPairsToSwap) 0 else 1
+    var swapped = false
 
     while (i != 0) {
       if (i % 2 == 1 && j + 1 < elms.length) {
-        swapped = true
         swap(j, j + 1)
+        swapped = true
       }
       i >>>= 1
       j += 2

@@ -4,9 +4,8 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-//libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.6"
-// Change this to another test framework if you prefer
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
 // Uncomment to use Akka
 //libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.11"
