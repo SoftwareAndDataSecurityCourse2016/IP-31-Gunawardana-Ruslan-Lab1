@@ -7,7 +7,7 @@ package ua.kpi.ip31.gunawardana.repository
   * @author Ruslan Gunawardana
   */
 trait TextStatisticsRepository {
-  def firstOrderStatistics: Map[String, Double]
+  def firstOrderStatistics: Map[Char, Double]
 
   def secondOrderStatistics: Map[String, Double]
 
@@ -15,5 +15,5 @@ trait TextStatisticsRepository {
 
   def alphabet: String
 
-  def alphabetSortedByStats(stats: Map[String, Double]): String
+  def alphabetSortedByStats(stats: Map[Char, Double]): String
 }

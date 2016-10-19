@@ -9,7 +9,8 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
 
   import EnglishTextStatisticsRepository._
 
-  override def firstOrderStatistics: Map[String, Double] = loadStatisticsFrom("/first-order-statistics.csv")
+  override def firstOrderStatistics: Map[Char, Double] =
+    loadStatisticsFrom("/first-order-statistics.csv") map { case (k, v) => k(0) -> v }
 
   override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom("/second-order-statistics.csv")
 
@@ -31,11 +32,11 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
     statistics
   }
 
-  override def alphabet = "abcdefghijklmnopqrstuvwxyz"
+  override val alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-  override def alphabetSortedByStats(stats: Map[String, Double]): String = {
+  override def alphabetSortedByStats(stats: Map[Char, Double]): String = {
     (alphabet
-      map { c => c -> stats.getOrElse(c.toString, 0.0) }
+      map { c => c -> stats.getOrElse(c, 0.0) }
       sortBy (_._2)
       map (_._1)).mkString
   }
