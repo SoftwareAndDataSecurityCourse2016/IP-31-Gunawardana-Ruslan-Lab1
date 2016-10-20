@@ -13,6 +13,7 @@ class StatisticsCalculator {
     text foreach { c =>
       occurrenceMap(c) = occurrenceMap.getOrElse(c, 0.0) + 1
     }
+    occurrenceMap transform ((k, v) => v / text.length)
     occurrenceMap.toMap
   }
 
@@ -20,22 +21,22 @@ class StatisticsCalculator {
     if (order == 1) {
       firstOrderStatistics(text) map { case (k, v) => k.toString -> v }
     } else {
-      val occurrenceMap = new mutable.HashMap[String, Double]
+      val nGramFrequency = mutable.Map[String, Double]()
       text sliding order foreach { windowedText =>
-        occurrenceMap(windowedText) = occurrenceMap.getOrElse(windowedText, 0.0) + 1
+        nGramFrequency(windowedText) = nGramFrequency.getOrElse(windowedText, 0.0) + 1
       }
-      val relativeFrequencyMap = occurrenceMap map { case (k, v) =>
-        val firstLetterCount = text count (_ == k(0))
-        k -> v / firstLetterCount
+      nGramFrequency transform { (k, v) =>
+        val sameInitCount = nGramFrequency.keys count (_.init == k.init)
+        v / sameInitCount
       }
-      relativeFrequencyMap.toMap
+      nGramFrequency.toMap
     }
   }
 
   def chiSquareTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
     (expectedValues.par map { case (key, expected) =>
       val actual = actualValues.getOrElse(key, 0.0)
-      math.pow(actual - expected, 2) / expected
+      (actual - expected) * (actual - expected) / expected
     }).sum
   }
 }

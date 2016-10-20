@@ -1,5 +1,6 @@
 package ua.kpi.ip31.gunawardana
 
+import com.typesafe.scalalogging.LazyLogging
 import ua.kpi.ip31.gunawardana.repository.TextStatisticsRepository
 
 import scala.collection.mutable
@@ -12,7 +13,7 @@ import scala.util.Random
   */
 class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
                                 statsCalculator: StatisticsCalculator,
-                                cycles: Int) extends Decoder {
+                                cycles: Int) extends Decoder with LazyLogging {
   override def decode(ciphertext: String): String = {
     val lowerDecipheringKey = decipheringKeyFor(ciphertext.toLowerCase)
     val upperDecipheringKey = lowerDecipheringKey map { case (k, v) => k.toUpper -> v.toUpper }
@@ -21,16 +22,16 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
   }
 
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
-    val expectedStats = statsRepo.thirdOrderStatistics
-    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 3)
+    val expectedStats = statsRepo.secondOrderStatistics
+    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 2)
     val plaintextAlphabet = statsRepo alphabetSortedByStats statsRepo.firstOrderStatistics
     val ciphertextAlphabet = statsRepo alphabetSortedByStats (statsCalculator firstOrderStatistics ciphertext)
 
+    // least test result is the best
     val decipheringKey = mutable.Map(ciphertextAlphabet zip plaintextAlphabet: _*)
     var minTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
-
-    // least test result is the best
-    for (_ <- 1 to cycles) {
+    var iterationsLeft = cycles
+    while (iterationsLeft > 0) {
       val c1 = randomChar(statsRepo.alphabet)
       val c2 = randomChar(statsRepo.alphabet)
 
@@ -41,9 +42,12 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
       val newTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
       if (newTestResult < minTestResult) {
         minTestResult = newTestResult
+        iterationsLeft = cycles
+        logger.debug(s"key = $decipheringKey, testResult = $minTestResult")
       } else {
         decipheringKey(c2) = decipheringKey(c1)
         decipheringKey(c1) = tmp
+        iterationsLeft -= 1
       }
     }
     decipheringKey.toMap
