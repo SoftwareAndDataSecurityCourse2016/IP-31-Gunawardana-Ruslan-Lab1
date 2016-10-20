@@ -68,6 +68,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Custom user path files
-/.idea/sbt.xml
-/.idea/misc.xml
+# SBT:
+.idea/sbt.xml
