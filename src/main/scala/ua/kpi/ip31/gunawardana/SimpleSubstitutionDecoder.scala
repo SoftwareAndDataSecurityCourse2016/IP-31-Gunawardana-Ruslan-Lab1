@@ -13,13 +13,18 @@ import scala.util.Random
   */
 class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
                                 statsCalculator: StatisticsCalculator,
-                                cycles: Int) extends Decoder with LazyLogging {
+                                cycles: Int)
+  extends Decoder
+    with LazyLogging {
+
   override def decode(ciphertext: String): String = {
     val lowerDecipheringKey = decipheringKeyFor(ciphertext.toLowerCase)
     val upperDecipheringKey = lowerDecipheringKey map { case (k, v) => k.toUpper -> v.toUpper }
     val decipheringKey = lowerDecipheringKey ++ upperDecipheringKey
     ciphertext map decipheringKey
   }
+
+  import SimpleSubstitutionDecoder.swap
 
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
     val expectedStats = statsRepo.thirdOrderStatistics
@@ -53,12 +58,6 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
     str(Random nextInt str.length)
   }
 
-  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char) {
-    val tmp = map(c1)
-    map(c1) = map(c2)
-    map(c2) = tmp
-  }
-
   private def testResult(expectedStats: Map[String, Double],
                          ciphertextStats: Map[String, Double],
                          decipheringKey: collection.Map[Char, Char]): Double = {
@@ -66,5 +65,13 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
       (k map decipheringKey) -> v
     }
     statsCalculator.chiSquareTest(expectedStats, actualStats)
+  }
+}
+
+private object SimpleSubstitutionDecoder {
+  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char) {
+    val tmp = map(c1)
+    map(c1) = map(c2)
+    map(c2) = tmp
   }
 }

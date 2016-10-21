@@ -7,14 +7,14 @@ package ua.kpi.ip31.gunawardana.repository
   */
 class EnglishTextStatisticsRepository extends TextStatisticsRepository {
 
-  import EnglishTextStatisticsRepository._
+  override val alphabet = "abcdefghijklmnopqrstuvwxyz"
 
   override def firstOrderStatistics: Map[Char, Double] =
     loadStatisticsFrom("/first-order-statistics.csv") map { case (k, v) => k(0) -> v }
 
   override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom("/second-order-statistics.csv")
 
-  override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom("/third-order-statistics.csv")
+  import EnglishTextStatisticsRepository.parseCsvLine
 
   private def loadStatisticsFrom(path: String): Map[String, Double] = {
     val source = io.Source.fromInputStream(getClass getResourceAsStream path)
@@ -32,7 +32,7 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
     statistics
   }
 
-  override val alphabet = "abcdefghijklmnopqrstuvwxyz"
+  override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom("/third-order-statistics.csv")
 
   override def alphabetSortedByStats(stats: Map[Char, Double]): String = {
     (alphabet
@@ -42,6 +42,6 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
   }
 }
 
-object EnglishTextStatisticsRepository {
+private object EnglishTextStatisticsRepository {
   private def parseCsvLine(line: String): Array[String] = line.split(",").map(_.trim)
 }

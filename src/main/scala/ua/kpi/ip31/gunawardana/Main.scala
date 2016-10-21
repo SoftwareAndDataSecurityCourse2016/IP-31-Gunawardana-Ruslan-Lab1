@@ -18,7 +18,8 @@ object Main extends App {
   val ciphertextRepository = new CiphertextRepository
 
   val ciphertext = ciphertextRepository.ciphertexts.head
-  val plaintext = decoder.decode(ciphertext)
+  val plaintext = decoder decode ciphertext
+
   println("Encoded ciphertext:")
   println(ciphertext)
   println("Decoded plaintext:")

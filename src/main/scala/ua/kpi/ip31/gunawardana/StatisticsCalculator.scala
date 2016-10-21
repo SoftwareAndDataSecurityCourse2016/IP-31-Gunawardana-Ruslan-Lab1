@@ -8,15 +8,6 @@ import scala.collection.mutable
   * @author Ruslan Gunawardana
   */
 class StatisticsCalculator {
-  def firstOrderStatistics(text: String): Map[Char, Double] = {
-    val occurrenceMap = new mutable.HashMap[Char, Double]
-    text foreach { c =>
-      occurrenceMap(c) = occurrenceMap.getOrElse(c, 0.0) + 1
-    }
-    occurrenceMap transform ((k, v) => v / text.length)
-    occurrenceMap.toMap
-  }
-
   def orderStatistics(text: String, order: Int): Map[String, Double] = {
     if (order == 1) {
       firstOrderStatistics(text) map { case (k, v) => k.toString -> v }
@@ -31,6 +22,15 @@ class StatisticsCalculator {
       }
       nGramFrequency.toMap
     }
+  }
+
+  def firstOrderStatistics(text: String): Map[Char, Double] = {
+    val occurrenceMap = new mutable.HashMap[Char, Double]
+    text foreach { c =>
+      occurrenceMap(c) = occurrenceMap.getOrElse(c, 0.0) + 1
+    }
+    occurrenceMap transform ((k, v) => v / text.length)
+    occurrenceMap.toMap
   }
 
   def chiSquareTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
