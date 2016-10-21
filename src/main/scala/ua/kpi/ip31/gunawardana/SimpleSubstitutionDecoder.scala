@@ -22,8 +22,8 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
   }
 
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
-    val expectedStats = statsRepo.secondOrderStatistics
-    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 2)
+    val expectedStats = statsRepo.thirdOrderStatistics
+    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 3)
     val plaintextAlphabet = statsRepo alphabetSortedByStats statsRepo.firstOrderStatistics
     val ciphertextAlphabet = statsRepo alphabetSortedByStats (statsCalculator firstOrderStatistics ciphertext)
 
@@ -32,12 +32,8 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
     var minTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
     var iterationsLeft = cycles
     while (iterationsLeft > 0) {
-      val c1 = randomChar(statsRepo.alphabet)
-      val c2 = randomChar(statsRepo.alphabet)
-
-      val tmp = decipheringKey(c1)
-      decipheringKey(c1) = decipheringKey(c2)
-      decipheringKey(c2) = tmp
+      val (c1, c2) = (randomLetter, randomLetter)
+      swap(decipheringKey, c1, c2)
 
       val newTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
       if (newTestResult < minTestResult) {
@@ -45,19 +41,27 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
         iterationsLeft = cycles
         logger.debug(s"key = $decipheringKey, testResult = $minTestResult")
       } else {
-        decipheringKey(c2) = decipheringKey(c1)
-        decipheringKey(c1) = tmp
+        swap(decipheringKey, c1, c2)
         iterationsLeft -= 1
       }
     }
     decipheringKey.toMap
   }
 
-  private def randomChar(str: String): Char = str(Random nextInt str.length)
+  private def randomLetter: Char = {
+    val str = statsRepo.alphabet
+    str(Random nextInt str.length)
+  }
+
+  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char) {
+    val tmp = map(c1)
+    map(c1) = map(c2)
+    map(c2) = tmp
+  }
 
   private def testResult(expectedStats: Map[String, Double],
                          ciphertextStats: Map[String, Double],
-                         decipheringKey: mutable.Map[Char, Char]): Double = {
+                         decipheringKey: collection.Map[Char, Char]): Double = {
     val actualStats = ciphertextStats map { case (k, v) =>
       (k map decipheringKey) -> v
     }

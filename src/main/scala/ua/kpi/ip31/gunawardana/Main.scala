@@ -10,7 +10,7 @@ import scala.util.Try
   * @author Ruslan Gunawardana
   */
 object Main extends App {
-  val cycles = Try(args(0).toInt) getOrElse (64 * 1024 * 1024)
+  val cycles = Try(args(0).toInt) getOrElse (16 * 1024)
 
   val statsRepo = new EnglishTextStatisticsRepository
   val statsCalculator = new StatisticsCalculator

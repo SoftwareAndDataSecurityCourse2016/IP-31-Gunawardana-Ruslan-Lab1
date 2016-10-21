@@ -34,7 +34,7 @@ class StatisticsCalculator {
   }
 
   def chiSquareTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
-    (expectedValues.par map { case (key, expected) =>
+    (expectedValues map { case (key, expected) =>
       val actual = actualValues.getOrElse(key, 0.0)
       (actual - expected) * (actual - expected) / expected
     }).sum
