@@ -9,14 +9,16 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
 
   override val alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-  override def firstOrderStatistics: Map[Char, Double] =
-    loadStatisticsFrom("/first-order-statistics.csv") map { case (k, v) => k(0) -> v }
+  override def firstOrderStatistics: Map[Char, Double] = loadStatisticsFrom(1) map { case (k, v) => k(0) -> v }
 
-  override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom("/second-order-statistics.csv")
+  override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom(2)
 
-  import EnglishTextStatisticsRepository.parseCsvLine
+  override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom(3)
 
-  private def loadStatisticsFrom(path: String): Map[String, Double] = {
+  import EnglishTextStatisticsRepository._
+
+  private def loadStatisticsFrom(order: Int): Map[String, Double] = {
+    val path = fileByOrder(order)
     val source = io.Source.fromInputStream(getClass getResourceAsStream path)
     val rows = (source.getLines map parseCsvLine).toIterable
     val columnTitles = rows.head.tail map (_ charAt 0)
@@ -31,17 +33,13 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
     source.close()
     statistics
   }
-
-  override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom("/third-order-statistics.csv")
-
-  override def alphabetSortedByStats(stats: Map[Char, Double]): String = {
-    (alphabet
-      map { c => c -> stats.getOrElse(c, 0.0) }
-      sortBy (_._2)
-      map (_._1)).mkString
-  }
 }
 
 private object EnglishTextStatisticsRepository {
+  private val fileByOrder = Map(
+    1 -> "/first-order-statistics.csv",
+    2 -> "/second-order-statistics.csv",
+    3 -> "/third-order-statistics.csv")
+
   private def parseCsvLine(line: String): Array[String] = line.split(",").map(_.trim)
 }

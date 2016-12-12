@@ -14,6 +14,4 @@ trait TextStatisticsRepository {
   def thirdOrderStatistics: Map[String, Double]
 
   def alphabet: String
-
-  def alphabetSortedByStats(stats: Map[Char, Double]): String
 }

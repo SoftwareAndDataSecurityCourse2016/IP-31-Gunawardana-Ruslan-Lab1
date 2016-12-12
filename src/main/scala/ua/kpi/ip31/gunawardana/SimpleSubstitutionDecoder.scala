@@ -14,8 +14,8 @@ import scala.util.Random
 class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
                                 statsCalculator: StatisticsCalculator,
                                 cycles: Int)
-  extends Decoder
-    with LazyLogging {
+  extends Decoder with LazyLogging {
+  private[this] val random = new Random
 
   override def decode(ciphertext: String): String = {
     val lowerDecipheringKey = decipheringKeyFor(ciphertext.toLowerCase)
@@ -29,8 +29,8 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
     val expectedStats = statsRepo.thirdOrderStatistics
     val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 3)
-    val plaintextAlphabet = statsRepo alphabetSortedByStats statsRepo.firstOrderStatistics
-    val ciphertextAlphabet = statsRepo alphabetSortedByStats (statsCalculator firstOrderStatistics ciphertext)
+    val plaintextAlphabet = alphabetSortedByStats(statsRepo.firstOrderStatistics)
+    val ciphertextAlphabet = alphabetSortedByStats(statsCalculator firstOrderStatistics ciphertext)
 
     // least test result is the best
     val decipheringKey = mutable.Map(ciphertextAlphabet zip plaintextAlphabet: _*)
@@ -53,17 +53,23 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
     decipheringKey.toMap
   }
 
+  private def alphabetSortedByStats(stats: Map[Char, Double]): String = {
+    val letters = (statsRepo.alphabet
+      map { c => c -> stats.getOrElse(c, 0.0) }
+      sortBy (_._2)
+      map (_._1))
+    letters.mkString
+  }
+
   private def randomLetter: Char = {
-    val str = statsRepo.alphabet
-    str(Random nextInt str.length)
+    val alphabet = statsRepo.alphabet
+    alphabet(random nextInt alphabet.length)
   }
 
   private def testResult(expectedStats: Map[String, Double],
                          ciphertextStats: Map[String, Double],
                          decipheringKey: collection.Map[Char, Char]): Double = {
-    val actualStats = ciphertextStats map { case (k, v) =>
-      (k map decipheringKey) -> v
-    }
+    val actualStats = ciphertextStats map { case (k, v) => (k map decipheringKey) -> v }
     statsCalculator.chiSquareTest(expectedStats, actualStats)
   }
 }
