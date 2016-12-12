@@ -1,4 +1,4 @@
-package ua.kpi.ip31.gunawardana.repository
+package tk.exarus.kpi.security.repository
 
 /**
   * Grants access to some language statistics.
@@ -7,11 +7,11 @@ package ua.kpi.ip31.gunawardana.repository
   * @author Ruslan Gunawardana
   */
 trait TextStatisticsRepository {
+  def alphabet: String
+
   def firstOrderStatistics: Map[Char, Double]
 
   def secondOrderStatistics: Map[String, Double]
 
   def thirdOrderStatistics: Map[String, Double]
-
-  def alphabet: String
 }

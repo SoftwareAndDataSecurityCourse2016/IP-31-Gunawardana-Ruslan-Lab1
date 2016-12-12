@@ -1,6 +1,6 @@
-package ua.kpi.ip31.gunawardana
+package tk.exarus.kpi.security
 
-import ua.kpi.ip31.gunawardana.repository.{CiphertextRepository, EnglishTextStatisticsRepository}
+import tk.exarus.kpi.security.repository.{CiphertextRepository, EnglishTextStatisticsRepository}
 
 import scala.util.Try
 
@@ -17,7 +17,7 @@ object Main extends App {
   val decoder = new SimpleSubstitutionDecoder(statsRepo, statsCalculator, cycles)
   val ciphertextRepository = new CiphertextRepository
 
-  val ciphertext = ciphertextRepository.ciphertexts.head
+  val ciphertext = ciphertextRepository.ciphertext(0)
   val plaintext = decoder decode ciphertext
 
   println("Encoded ciphertext:")

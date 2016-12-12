@@ -1,7 +1,7 @@
-package ua.kpi.ip31.gunawardana
+package tk.exarus.kpi.security
 
 import com.typesafe.scalalogging.LazyLogging
-import ua.kpi.ip31.gunawardana.repository.TextStatisticsRepository
+import tk.exarus.kpi.security.repository.TextStatisticsRepository
 
 import scala.collection.mutable
 import scala.util.Random
@@ -54,11 +54,10 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
   }
 
   private def alphabetSortedByStats(stats: Map[Char, Double]): String = {
-    val letters = (statsRepo.alphabet
-      map { c => c -> stats.getOrElse(c, 0.0) }
-      sortBy (_._2)
-      map (_._1))
-    letters.mkString
+    val statsByLetter = statsRepo.alphabet map { c =>
+      c -> stats.getOrElse(c, 0.0)
+    }
+    (statsByLetter sortBy (_._2) map (_._1)).mkString
   }
 
   private def randomLetter: Char = {

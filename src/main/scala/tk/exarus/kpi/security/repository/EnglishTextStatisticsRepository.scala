@@ -1,4 +1,6 @@
-package ua.kpi.ip31.gunawardana.repository
+package tk.exarus.kpi.security.repository
+
+import scala.io.Source.fromResource
 
 /**
   * Grants access to English statistics.
@@ -6,7 +8,6 @@ package ua.kpi.ip31.gunawardana.repository
   * @author Ruslan Gunawardana
   */
 class EnglishTextStatisticsRepository extends TextStatisticsRepository {
-
   override val alphabet = "abcdefghijklmnopqrstuvwxyz"
 
   override def firstOrderStatistics: Map[Char, Double] = loadStatisticsFrom(1) map { case (k, v) => k(0) -> v }
@@ -18,8 +19,8 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
   import EnglishTextStatisticsRepository._
 
   private def loadStatisticsFrom(order: Int): Map[String, Double] = {
-    val path = fileByOrder(order)
-    val source = io.Source.fromInputStream(getClass getResourceAsStream path)
+    val path = pathByOrder(order)
+    val source = fromResource(path)
     val rows = (source.getLines map parseCsvLine).toIterable
     val columnTitles = rows.head.tail map (_ charAt 0)
     val statistics = rows
@@ -36,10 +37,14 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
 }
 
 private object EnglishTextStatisticsRepository {
-  private val fileByOrder = Map(
-    1 -> "/first-order-statistics.csv",
-    2 -> "/second-order-statistics.csv",
-    3 -> "/third-order-statistics.csv")
+  private val pathByOrder = {
+    val statisticsPathRoot = "statistical-distributions/"
+    val fileByOrder = Map(
+      1 -> "first-order-statistics.csv",
+      2 -> "second-order-statistics.csv",
+      3 -> "third-order-statistics.csv")
+    fileByOrder mapValues (statisticsPathRoot + _)
+  }
 
-  private def parseCsvLine(line: String): Array[String] = line.split(",").map(_.trim)
+  private def parseCsvLine(line: String): Array[String] = line split "," map (_.trim)
 }
