@@ -1,7 +1,7 @@
 package tk.exarus.kpi.security
 
 import com.typesafe.scalalogging.LazyLogging
-import tk.exarus.kpi.security.repository.TextStatisticsRepository
+import tk.exarus.kpi.security.combination.CombinationStatisticsCalculator
 
 import scala.collection.mutable
 import scala.util.Random
@@ -12,7 +12,7 @@ import scala.util.Random
   * @author Ruslan Gunawardana
   */
 class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
-                                statsCalculator: StatisticsCalculator,
+                                statsCalculator: CombinationStatisticsCalculator,
                                 cycles: Int)
   extends Decoder with LazyLogging {
   private[this] val random = new Random
@@ -69,12 +69,20 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
                          ciphertextStats: Map[String, Double],
                          decipheringKey: collection.Map[Char, Char]): Double = {
     val actualStats = ciphertextStats map { case (k, v) => (k map decipheringKey) -> v }
-    statsCalculator.chiSquareTest(expectedStats, actualStats)
+    chiSquareTest(expectedStats, actualStats)
+  }
+
+  private def chiSquareTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
+    val deviations = expectedValues map { case (key, expected) =>
+      val actual = actualValues.getOrElse(key, 0.0)
+      (actual - expected) * (actual - expected) / expected
+    }
+    deviations.sum
   }
 }
 
 private object SimpleSubstitutionDecoder {
-  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char) {
+  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char): Unit = {
     val tmp = map(c1)
     map(c1) = map(c2)
     map(c2) = tmp

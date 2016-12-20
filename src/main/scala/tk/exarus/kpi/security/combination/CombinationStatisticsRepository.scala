@@ -1,4 +1,6 @@
-package tk.exarus.kpi.security.repository
+package tk.exarus.kpi.security.combination
+
+import tk.exarus.kpi.security.TextStatisticsRepository
 
 import scala.io.Source.fromResource
 
@@ -7,7 +9,9 @@ import scala.io.Source.fromResource
   *
   * @author Ruslan Gunawardana
   */
-class EnglishTextStatisticsRepository extends TextStatisticsRepository {
+class CombinationStatisticsRepository extends TextStatisticsRepository {
+  import CombinationStatisticsRepository.{parseCsvLine, pathByOrder}
+
   override val alphabet = "abcdefghijklmnopqrstuvwxyz"
 
   override def firstOrderStatistics: Map[Char, Double] = loadStatisticsFrom(1) map { case (k, v) => k(0) -> v }
@@ -15,8 +19,6 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
   override def secondOrderStatistics: Map[String, Double] = loadStatisticsFrom(2)
 
   override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom(3)
-
-  import EnglishTextStatisticsRepository._
 
   private def loadStatisticsFrom(order: Int): Map[String, Double] = {
     val path = pathByOrder(order)
@@ -36,7 +38,7 @@ class EnglishTextStatisticsRepository extends TextStatisticsRepository {
   }
 }
 
-private object EnglishTextStatisticsRepository {
+private object CombinationStatisticsRepository {
   private val pathByOrder = {
     val statisticsPathRoot = "statistical-distributions/"
     val fileByOrder = Map(

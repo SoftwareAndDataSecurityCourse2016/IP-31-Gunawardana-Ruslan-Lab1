@@ -1,4 +1,4 @@
-package tk.exarus.kpi.security.repository
+package tk.exarus.kpi.security
 
 /**
   * Grants access to some language statistics.
