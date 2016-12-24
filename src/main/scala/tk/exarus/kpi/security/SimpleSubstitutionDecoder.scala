@@ -89,6 +89,6 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
       val actual = actualValues.getOrElse(key, 0.0)
       (actual - expected) * (actual - expected) / expected
     }
-    deviations.sum
+    - deviations.sum
   }
 }
