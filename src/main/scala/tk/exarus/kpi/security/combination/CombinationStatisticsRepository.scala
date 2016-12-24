@@ -10,9 +10,9 @@ import scala.io.Source.fromResource
   * @author Ruslan Gunawardana
   */
 class CombinationStatisticsRepository extends TextStatisticsRepository {
-  import CombinationStatisticsRepository.{parseCsvLine, pathByOrder}
+  import CombinationStatisticsRepository.{parseCsvLine, pathByOrder, englishAlphabet}
 
-  override val alphabet = "abcdefghijklmnopqrstuvwxyz"
+  override val alphabet: String = englishAlphabet
 
   override def firstOrderStatistics: Map[Char, Double] = loadStatisticsFrom(1) map { case (k, v) => k(0) -> v }
 
@@ -21,8 +21,7 @@ class CombinationStatisticsRepository extends TextStatisticsRepository {
   override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFrom(3)
 
   private def loadStatisticsFrom(order: Int): Map[String, Double] = {
-    val path = pathByOrder(order)
-    val source = fromResource(path)
+    val source = fromResource(pathByOrder(order))
     val rows = (source.getLines map parseCsvLine).toIterable
     val columnTitles = rows.head.tail map (_ charAt 0)
     val statistics = rows
@@ -39,6 +38,8 @@ class CombinationStatisticsRepository extends TextStatisticsRepository {
 }
 
 private object CombinationStatisticsRepository {
+  private val englishAlphabet = "abcdefghijklmnopqrstuvwxyz"
+
   private val pathByOrder = {
     val statisticsPathRoot = "statistical-distributions/"
     val fileByOrder = Map(

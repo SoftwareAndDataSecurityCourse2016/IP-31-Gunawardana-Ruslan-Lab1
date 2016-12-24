@@ -11,8 +11,7 @@ import scala.util.Random
   *
   * @author Ruslan Gunawardana
   */
-class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository,
-                                statsCalculator: CombinationStatisticsCalculator,
+class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalculator: StatisticsCalculator,
                                 cycles: Int)
   extends Decoder with LazyLogging {
   private[this] val random = new Random

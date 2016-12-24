@@ -1,6 +1,6 @@
 package tk.exarus.kpi.security
 
-import tk.exarus.kpi.security.combination.{CombinationStatisticsCalculator, CombinationStatisticsRepository}
+import tk.exarus.kpi.security.occurrence.{OccurrenceStatisticsCalculator, OccurrenceStatisticsRepository}
 
 import scala.util.Try
 
@@ -12,8 +12,8 @@ import scala.util.Try
 object Main extends App {
   val cycles = Try(args(0).toInt) getOrElse (16 * 1024)
 
-  val statsRepo = new CombinationStatisticsRepository
-  val statsCalculator = new CombinationStatisticsCalculator
+  val statsRepo = new OccurrenceStatisticsRepository
+  val statsCalculator = new OccurrenceStatisticsCalculator
   val decoder = new SimpleSubstitutionDecoder(statsRepo, statsCalculator, cycles)
   val ciphertextRepository = new CiphertextRepository
 
