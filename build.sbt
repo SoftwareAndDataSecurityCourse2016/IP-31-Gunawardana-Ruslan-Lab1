@@ -4,6 +4,8 @@ version := "1.0"
 
 scalaVersion := "2.12.1"
 
+libraryDependencies += "com.jsuereth" %% "scala-arm" % "2.0"
+
 // logging
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.8"
 libraryDependencies += "com.typesafe.scala-logging" % "scala-logging_2.12" % "3.5.0"

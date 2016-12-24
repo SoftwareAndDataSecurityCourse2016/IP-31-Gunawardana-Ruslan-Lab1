@@ -2,7 +2,7 @@ package tk.exarus.kpi.security.combination
 
 import tk.exarus.kpi.security.StatisticsCalculator
 
-import scala.collection.{Map, mutable}
+import scala.collection.Map
 
 /**
   * Thread-safe. Immutable.
