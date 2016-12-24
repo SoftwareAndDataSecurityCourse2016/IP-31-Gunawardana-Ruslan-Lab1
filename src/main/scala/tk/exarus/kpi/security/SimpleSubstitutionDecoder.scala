@@ -26,8 +26,8 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
   import SimpleSubstitutionDecoder.swap
 
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
-    val expectedStats = statsRepo.thirdOrderStatistics
-    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 3)
+    val expectedStats = statsRepo.secondOrderStatistics
+    val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 2)
     val plaintextAlphabet = alphabetSortedByStats(statsRepo.firstOrderStatistics)
     val ciphertextAlphabet = alphabetSortedByStats(statsCalculator firstOrderStatistics ciphertext)
 

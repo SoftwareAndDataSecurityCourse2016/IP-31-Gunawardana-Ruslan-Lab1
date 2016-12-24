@@ -8,6 +8,7 @@ import scala.io.Source.fromResource
   * @author Ruslan Gunawardana
   */
 class OccurrenceStatisticsRepository extends TextStatisticsRepository {
+
   import OccurrenceStatisticsRepository.{englishAlphabet, pathByOrder}
 
   override def alphabet: String = englishAlphabet
@@ -20,14 +21,17 @@ class OccurrenceStatisticsRepository extends TextStatisticsRepository {
 
   private def loadStatisticsFor(order: Int): Map[String, Double] = {
     val source = fromResource(pathByOrder(order))
-    val stats = (source.getLines map parseLine).toIterable.toMap
+    val stats = source.getLines
+      .map(parseLine)
+      .filter { case (k, v) => (k forall (alphabet contains _)) && v > 0 }
+      .toMap
     source.close()
     stats
   }
 
   private def parseLine(line: String): (String, Double) = {
     val tokens = line split " " map (_.trim)
-    Tuple2(tokens(0), tokens(1).toDouble)
+    tokens(0).toLowerCase -> tokens(1).toDouble
   }
 }
 

@@ -10,7 +10,8 @@ import scala.io.Source.fromResource
   * @author Ruslan Gunawardana
   */
 class CombinationStatisticsRepository extends TextStatisticsRepository {
-  import CombinationStatisticsRepository.{parseCsvLine, pathByOrder, englishAlphabet}
+
+  import CombinationStatisticsRepository.{englishAlphabet, parseCsvLine, pathByOrder}
 
   override val alphabet: String = englishAlphabet
 
