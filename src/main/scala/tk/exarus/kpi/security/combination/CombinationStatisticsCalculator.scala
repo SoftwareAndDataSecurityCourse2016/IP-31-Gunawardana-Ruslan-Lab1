@@ -10,8 +10,9 @@ import scala.collection.Map
   * @author Ruslan Gunawardana
   */
 class CombinationStatisticsCalculator extends StatisticsCalculator {
-  override protected def occurrencesToFrequency(nGramToOccurrence: Map[String, Int],
-                                                key: String, occurrences: Int): Double = {
+  override protected
+  def occurrencesToFrequency(nGramToOccurrence: Map[String, Int],
+                             key: String, occurrences: Int): Double = {
     val sameInitNGramCount = nGramToOccurrence.keys count (_.init == key.init)
     occurrences / sameInitNGramCount
   }

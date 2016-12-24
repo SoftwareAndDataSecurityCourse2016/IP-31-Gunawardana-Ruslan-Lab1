@@ -10,8 +10,9 @@ import scala.collection.Map
   * @author Ruslan Gunawardana
   */
 class OccurrenceStatisticsCalculator extends StatisticsCalculator {
-  override protected def occurrencesToFrequency(nGramToOccurrence: Map[String, Int],
-                                                key: String, occurrences: Int): Double = {
+  override protected
+  def occurrencesToFrequency(nGramToOccurrence: Map[String, Int],
+                             key: String, occurrences: Int): Double = {
     occurrences.toDouble
   }
 }
