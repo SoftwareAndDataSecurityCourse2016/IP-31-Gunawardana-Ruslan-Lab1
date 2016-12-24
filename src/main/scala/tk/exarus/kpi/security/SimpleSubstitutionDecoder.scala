@@ -1,9 +1,9 @@
 package tk.exarus.kpi.security
 
 import com.typesafe.scalalogging.LazyLogging
-import tk.exarus.kpi.security.combination.CombinationStatisticsCalculator
 
 import scala.collection.mutable
+import scala.math.log10
 import scala.util.Random
 
 /**
@@ -31,17 +31,17 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
 
     // least test result is the best
     val decipheringKey = mutable.Map(ciphertextAlphabet zip plaintextAlphabet: _*)
-    var minTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
+    var bestTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
     var iterationsLeft = cycles
     while (iterationsLeft > 0) {
       val (c1, c2) = (randomLetter, randomLetter)
       swap(decipheringKey, c1, c2)
 
       val newTestResult = testResult(expectedStats, ciphertextStats, decipheringKey)
-      if (newTestResult < minTestResult) {
-        minTestResult = newTestResult
+      if (newTestResult > bestTestResult) {
+        bestTestResult = newTestResult
         iterationsLeft = cycles
-        logger.debug(s"key = $decipheringKey, testResult = $minTestResult")
+        logger.debug(s"key = $decipheringKey, testResult = $bestTestResult")
       } else {
         swap(decipheringKey, c1, c2)
         iterationsLeft -= 1
@@ -72,7 +72,16 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
                          ciphertextStats: Map[String, Double],
                          decipheringKey: collection.Map[Char, Char]): Double = {
     val actualStats = ciphertextStats map { case (k, v) => (k map decipheringKey) -> v }
-    chiSquareTest(expectedStats, actualStats)
+    fitnessTest(expectedStats, actualStats)
+  }
+
+  private def fitnessTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
+    val expectedValuesSum = expectedValues.values.sum
+    val deviations = actualValues map { case (key, actual) =>
+      val expected = expectedValues.getOrElse(key, 0.01)
+      log10(expected / expectedValuesSum) * actual
+    }
+    deviations.sum
   }
 
   private def chiSquareTest(expectedValues: Map[String, Double], actualValues: Map[String, Double]): Double = {
