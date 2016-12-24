@@ -35,6 +35,8 @@ class CombinationStatisticsRepository extends TextStatisticsRepository {
     source.close()
     statistics
   }
+
+  private def parseCsvLine(line: String): Array[String] = line split "," map (_.trim)
 }
 
 private object CombinationStatisticsRepository {
@@ -48,6 +50,4 @@ private object CombinationStatisticsRepository {
       3 -> "third-order-statistics.csv")
     fileByOrder mapValues (statisticsPathRoot + _)
   }
-
-  private def parseCsvLine(line: String): Array[String] = line split "," map (_.trim)
 }

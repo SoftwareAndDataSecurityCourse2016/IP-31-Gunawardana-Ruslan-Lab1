@@ -23,8 +23,6 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
     ciphertext map decipheringKey
   }
 
-  import SimpleSubstitutionDecoder.swap
-
   private def decipheringKeyFor(ciphertext: String): Map[Char, Char] = {
     val expectedStats = statsRepo.thirdOrderStatistics
     val ciphertextStats = statsCalculator.orderStatistics(ciphertext, 3)
@@ -52,6 +50,12 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
     decipheringKey.toMap
   }
 
+  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char): Unit = {
+    val tmp = map(c1)
+    map(c1) = map(c2)
+    map(c2) = tmp
+  }
+
   private def alphabetSortedByStats(stats: Map[Char, Double]): String = {
     val statsByLetter = statsRepo.alphabet map { c =>
       c -> stats.getOrElse(c, 0.0)
@@ -77,13 +81,5 @@ class SimpleSubstitutionDecoder(statsRepo: TextStatisticsRepository, statsCalcul
       (actual - expected) * (actual - expected) / expected
     }
     deviations.sum
-  }
-}
-
-private object SimpleSubstitutionDecoder {
-  private def swap(map: mutable.Map[Char, Char], c1: Char, c2: Char): Unit = {
-    val tmp = map(c1)
-    map(c1) = map(c2)
-    map(c2) = tmp
   }
 }
