@@ -6,7 +6,7 @@ In order to launch:
 1. Set `JAVA_HOME` environment variable to point to the Java 8 installation directory.
 2. Navigate to the project folder and execute following command:
 ```dos
-bin\activator run
+.\bin\activator run
 ```
 
 ### Linux and MacOS
