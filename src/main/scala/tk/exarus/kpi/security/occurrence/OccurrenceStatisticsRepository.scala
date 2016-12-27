@@ -20,13 +20,11 @@ class OccurrenceStatisticsRepository extends TextStatisticsRepository {
   override def thirdOrderStatistics: Map[String, Double] = loadStatisticsFor(3)
 
   private def loadStatisticsFor(order: Int): Map[String, Double] = {
-    val source = fromResource(pathByOrder(order))
-    val stats = source.getLines
+    fromResource(pathByOrder(order))
+      .getLines
       .map(parseLine)
       .filter { case (k, v) => (k forall (alphabet contains _)) && v > 0 }
       .toMap
-    source.close()
-    stats
   }
 
   private def parseLine(line: String): (String, Double) = {

@@ -1,6 +1,5 @@
 package tk.exarus.kpi.security
 
-import tk.exarus.kpi.security.combination.{CombinationStatisticsCalculator, CombinationStatisticsRepository}
 import tk.exarus.kpi.security.occurrence.{OccurrenceStatisticsCalculator, OccurrenceStatisticsRepository}
 
 import scala.util.Try
